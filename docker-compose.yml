@@ -1,0 +1,94 @@
+version: '1.0'
+
+services:
+  eureka-server:
+    build: eureka-server
+    mem_limit: 512m
+    ports:
+      - "8761:8761"
+    networks:
+      - 'tienda-network'
+  productos-service:
+    build: productos-service
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL= jdbc:mysql://productos_db/productos?createDatabaseIfNotExist=TRUE&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    restart: always
+    depends_on:
+      - productos_db
+      - eureka-server
+    networks:
+      - 'tienda-network'
+  carritos-service:
+    build: carritos-service
+    mem_limit: 512m
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL= jdbc:mysql://carritos_db/carritos?createDatabaseIfNotExist=TRUE&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    restart: always
+    depends_on:
+      - carritos_db
+      - eureka-server
+    networks:
+      - 'tienda-network'
+  ventas-service:
+    build: ventas-service
+    mem_limit: 512m
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL= jdbc:mysql://ventas_db/carritos?createDatabaseIfNotExist=TRUE&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+    restart: always
+    depends_on:
+      - ventas_db
+      - eureka-server
+    networks:
+      - 'tienda-network'
+  productos_db:
+    container_name: productos_db
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DB=productos
+      - MYSQL_ALLOW_EMPTY_PASSWORD=TRUE
+    restart: always
+    networks:
+      - 'tienda-network'
+  carritos_db:
+    container_name: carritos_db
+    image: mysql:8.0
+    ports:
+      - "3307:3307"
+    environment:
+      - MYSQL_DB=carritos
+      - MYSQL_ALLOW_EMPTY_PASSWORD=TRUE
+    restart: always
+    networks:
+      - 'tienda-network'
+  ventas_db:
+    container_name: ventas_db
+    image: mysql:8.0
+    ports:
+      - "3308:3308"
+    environment:
+      - MYSQL_DB=ventas
+      - MYSQL_ALLOW_EMPTY_PASSWORD=TRUE
+    restart: always
+    networks:
+      - 'tienda-network'
+networks:
+  tienda-network:
+
+
+
+    
